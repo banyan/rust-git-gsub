@@ -1,0 +1,11 @@
+[package]
+name = "git-gsub"
+version = "0.1.0"
+authors = ["Kohei Hasegawa"]
+repository = "https://github.com/banyan/git-gsub.rs"
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+getopts = "0.2.4"
+shlex = "0.1.1"
