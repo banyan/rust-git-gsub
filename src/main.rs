@@ -5,16 +5,17 @@ use std::env;
 use getopts::Options;
 
 #[cfg_attr(test, allow(dead_code))]
-
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} <from> <to> [target_files]", program);
     print!("{}", opts.usage(&brief));
 }
 
+#[cfg_attr(test, allow(dead_code))]
 fn print_version() {
     println!("{}", env!("CARGO_PKG_VERSION"));
 }
 
+#[cfg_attr(test, allow(dead_code))]
 fn main() {
     let program: String = env::args().nth(0).unwrap();
     let args: Vec<String> = env::args().collect();
