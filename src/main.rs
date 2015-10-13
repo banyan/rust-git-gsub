@@ -1,9 +1,8 @@
-extern crate getopts;
 extern crate shlex;
+extern crate getopts;
 
-use getopts::Options;
 use std::env;
-
+use getopts::Options;
 use std::process::Command;
 
 fn print_usage(program: &str, opts: Options) {
@@ -33,19 +32,18 @@ fn quote_args(args: Vec<String>) -> (String, String, String) {
     )
 }
 
-fn execute(args: Vec<String>) -> () {
+fn run(args: Vec<String>) -> () {
     let (from, to, path) = quote_args(args);
 
     let output = Command::new("git")
-                         .arg("grep")
-                         .arg("-l")
+                         .args(&["grep", "-l"])
                          .arg(&from)
                          .arg(&path)
                          .output()
                          .unwrap_or_else(|e| { panic!("failed to execute process: {}", e) });
 
-    let target_files_with_line_break = String::from_utf8_lossy(&output.stdout);
-    let target_files: Vec<&str> = target_files_with_line_break.lines_any().collect();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let target_files: Vec<&str> = stdout.lines_any().collect();
     if target_files.len() == 0 { return; }
     let re = format!("s/{}/{}/g", &from, &to);
 
@@ -58,9 +56,7 @@ fn execute(args: Vec<String>) -> () {
                 .unwrap_or_else(|e| { panic!("failed to execute process: {}", e) });
     } else {
         Command::new("sed")
-                .arg("-i")
-                .arg("")
-                .arg("-e")
+                .args(&["-i", "", "-e"])
                 .arg(&re)
                 .args(&target_files)
                 .status()
@@ -87,5 +83,5 @@ fn main() {
         return print_usage(&program, opts);
     }
 
-    execute(args);
+    run(args);
 }
