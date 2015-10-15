@@ -39,8 +39,7 @@ fn repalce_the_words_if_git_gsub_run() {
             .status()
             .unwrap_or_else(|e| { panic!("failed to execute process: {}", e) });
 
-    // FIXME how to write better...
-    let args: Vec<String> = vec!["git_gsub".to_string(), "foo".to_string(), "bar".to_string()];
+    let args = vec!["git_gsub", "foo", "bar"].iter().map(|c| c.to_string()).collect::<Vec<String>>();
     git_gsub::run(args);
 
     let path = Path::new("foo.txt");
