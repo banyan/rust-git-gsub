@@ -14,7 +14,7 @@ fn temp_dir() -> TempDir {
 }
 
 #[test]
-fn repalce_the_words_if_git_gsub_run() {
+fn substitute_the_words_if_git_gsub_run() {
     let tmpdir = temp_dir();
     let tmp_path_str: &str = tmpdir.path().to_str().unwrap();
     let _ = env::set_current_dir(&tmp_path_str);
@@ -40,7 +40,7 @@ fn repalce_the_words_if_git_gsub_run() {
             .unwrap_or_else(|e| { panic!("failed to execute process: {}", e) });
 
     let args = vec!["git_gsub", "foo", "bar"].iter().map(|c| c.to_string()).collect::<Vec<String>>();
-    git_gsub::run(args);
+    git_gsub::substitute(args);
 
     let path = Path::new("foo.txt");
     let display = path.display();

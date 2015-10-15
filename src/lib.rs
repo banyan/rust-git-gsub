@@ -1,6 +1,18 @@
 extern crate shlex;
+extern crate getopts;
 
+use std::env;
+use getopts::Options;
 use std::process::Command;
+
+fn print_usage(program: &str, opts: Options) {
+    let brief = format!("Usage: {} <from> <to> [target_files]", program);
+    print!("{}", opts.usage(&brief));
+}
+
+fn print_version() {
+    println!("{}", env!("CARGO_PKG_VERSION"));
+}
 
 fn is_gsed_installed() -> bool {
     Command::new("which")
@@ -20,7 +32,7 @@ fn quote_args(args: Vec<String>) -> (String, String, String) {
     )
 }
 
-pub fn run(args: Vec<String>) -> () {
+pub fn substitute(args: Vec<String>) -> () {
     let (from, to, path) = quote_args(args);
 
     let output = Command::new("git")
@@ -51,4 +63,24 @@ pub fn run(args: Vec<String>) -> () {
                 .unwrap_or_else(|e| { panic!("failed to execute process: {}", e) });
 
     }
+}
+
+pub fn run(mut args: env::Args) -> () {
+    let program: String = args.nth(0).unwrap();
+    let args: Vec<String> = args.collect();
+
+    let mut opts = Options::new();
+    opts.optflag("h", "help", "print this help menu");
+    opts.optflag("v", "version", "print version");
+    let matches = match opts.parse(&args[1..]) {
+        Ok(m)  => { m }
+        Err(f) => { panic!(f.to_string()) }
+    };
+
+    if matches.opt_present("v") {
+        return print_version();
+    } else if matches.opt_present("h") || args.len() <= 2 {
+        return print_usage(&program, opts);
+    }
+   substitute(args);
 }
