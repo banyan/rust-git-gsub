@@ -1,6 +1,6 @@
 [package]
 name = "git-gsub"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Kohei Hasegawa"]
 description = "A Git subcommand to do gsub in a repository"
 repository = "https://github.com/banyan/rust-git-gsub"
