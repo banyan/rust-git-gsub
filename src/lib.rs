@@ -73,8 +73,6 @@ pub fn run(args: env::Args) -> () {
     opts.optflag("h", "help", "print this help menu");
     opts.optflag("v", "version", "print version");
 
-    if args.len() <= 2 { return print_usage(&program, opts) }
-
     let matches = match opts.parse(&args[1..]) {
         Ok(m)  => { m }
         Err(f) => { panic!(f.to_string()) }
@@ -82,7 +80,7 @@ pub fn run(args: env::Args) -> () {
 
     if matches.opt_present("v") {
         return print_version();
-    } else if matches.opt_present("h") {
+    } else if matches.opt_present("h") || args.len() <= 2 {
         return print_usage(&program, opts);
     }
 

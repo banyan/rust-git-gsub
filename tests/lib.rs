@@ -24,7 +24,7 @@ fn assert_substitution(from: &str, to: &str) {
             .status()
             .unwrap_or_else(|e| { panic!("failed to execute process: {}", e) });
     let args = vec!["git_gsub", from, to].iter().map(|c| c.to_string()).collect::<Vec<String>>();
-    git_gsub::substitute(args);
+    git_gsub::substitute(&args);
     let mut file = File::open(&path).unwrap();
     let mut s = String::new();
     file.read_to_string(&mut s).unwrap();
