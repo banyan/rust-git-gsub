@@ -24,7 +24,7 @@ fn is_gsed_installed() -> bool {
             .success()
 }
 
-fn quote_args(args: Vec<String>) -> (String, String, String) {
+fn quote_args(args: &Vec<String>) -> (String, String, String) {
     let quoted_args: Vec<String> = args[1..].iter().map(|x| shlex::quote(x).to_string() ).collect();
     (
         quoted_args[0].clone(),
@@ -33,8 +33,8 @@ fn quote_args(args: Vec<String>) -> (String, String, String) {
     )
 }
 
-pub fn substitute(args: Vec<String>) -> () {
-    let (from, to, path) = quote_args(args);
+pub fn substitute(args: &Vec<String>) -> () {
+    let (from, to, path) = quote_args(&args);
 
     let output = Command::new("git")
                          .args(&["grep", "-l"])
@@ -65,13 +65,16 @@ pub fn substitute(args: Vec<String>) -> () {
     }
 }
 
-pub fn run(mut args: env::Args) -> () {
-    let program: String = args.nth(0).unwrap();
+pub fn run(args: env::Args) -> () {
     let args: Vec<String> = args.collect();
+    let ref program = args[0];
 
     let mut opts = Options::new();
     opts.optflag("h", "help", "print this help menu");
     opts.optflag("v", "version", "print version");
+
+    if args.len() <= 2 { return print_usage(&program, opts) }
+
     let matches = match opts.parse(&args[1..]) {
         Ok(m)  => { m }
         Err(f) => { panic!(f.to_string()) }
@@ -79,9 +82,9 @@ pub fn run(mut args: env::Args) -> () {
 
     if matches.opt_present("v") {
         return print_version();
-    } else if matches.opt_present("h") || args.len() <= 2 {
+    } else if matches.opt_present("h") {
         return print_usage(&program, opts);
     }
 
-   substitute(args);
+    substitute(&args);
 }
