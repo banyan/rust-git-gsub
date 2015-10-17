@@ -3,6 +3,7 @@ extern crate getopts;
 
 use std::env;
 use getopts::Options;
+use std::process::exit;
 use std::process::Command;
 
 fn print_usage(program: &str, opts: Options) {
@@ -44,7 +45,7 @@ pub fn substitute(args: Vec<String>) -> () {
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let target_files: Vec<&str> = stdout.lines_any().collect();
-    if target_files.len() == 0 { return; }
+    if target_files.len() == 0 { exit(0); }
     let re = format!("s/{}/{}/g", &from, &to);
 
     if is_gsed_installed() {
@@ -61,7 +62,6 @@ pub fn substitute(args: Vec<String>) -> () {
                 .args(&target_files)
                 .status()
                 .unwrap_or_else(|e| { panic!("failed to execute process: {}", e) });
-
     }
 }
 
@@ -82,5 +82,6 @@ pub fn run(mut args: env::Args) -> () {
     } else if matches.opt_present("h") || args.len() <= 2 {
         return print_usage(&program, opts);
     }
+
    substitute(args);
 }
